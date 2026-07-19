@@ -1,0 +1,21 @@
+# Deployment example. Put this (plus a filled-in .env, see .env.example) in a
+# directory on the host, e.g. /opt/discord-restart-bot, then:
+#   docker compose up -d
+
+services:
+  bot:
+    image: ghcr.io/onyxraven/discord-restart-bot:latest
+    container_name: discord-restart-bot
+    restart: unless-stopped
+    env_file: .env
+    # host networking so gamedig player checks can query game ports on
+    # 127.0.0.1 (game servers commonly run with network_mode: host too)
+    network_mode: host
+    volumes:
+      # root-equivalent access to the host docker daemon - this is what lets
+      # the bot pull/restart other containers. Keep DISCORD_ROLE_IDS tight.
+      - /var/run/docker.sock:/var/run/docker.sock
+      # every compose project dir referenced in COMPOSE_FILES must be mounted
+      # read-only at the same path as on the host (plugins too, if elsewhere)
+      - /opt/games:/opt/games:ro
+    mem_limit: 256m

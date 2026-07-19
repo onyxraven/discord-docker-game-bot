@@ -1,0 +1,25 @@
+{
+  "name": "discord-restart-bot",
+  "version": "0.1.0",
+  "description": "Discord bot for role-gated docker compose game-server restarts: player checks (gamedig, JS plugins, or custom commands), liveness confirmation, and unattended maintenance restarts via cron",
+  "type": "module",
+  "main": "src/index.js",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onyxraven/discord-restart-bot.git"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "maintenance": "node src/maintenance.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.16.3",
+    "gamedig": "^5.1.4",
+    "nano-spawn": "^1.0.0",
+    "yaml": "^2.5.1"
+  }
+}

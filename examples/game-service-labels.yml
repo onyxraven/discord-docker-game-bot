@@ -1,0 +1,32 @@
+# Label reference: add these to services in the compose files listed in the
+# bot's COMPOSE_FILES. Only `enable` is required.
+
+services:
+  # gamedig player check (most game servers): query success doubles as the
+  # post-restart liveness check
+  valheim:
+    image: gameservermanagers/gameserver:vh
+    network_mode: host
+    labels:
+      - "discord.restart.enable=true"
+      - "discord.restart.name=valheim"                    # /restart choice name (default: service key)
+      - "discord.restart.gamedig=valheim:127.0.0.1:2457"  # type:host:port -> https://github.com/gamedig/node-gamedig#games-list
+
+  # custom shell commands: check prints a player count; upcheck exits 0 once
+  # the server is up (it gets RESTARTED_AT=<epoch> in its environment so it
+  # can require data newer than the restart). Both run inside the bot
+  # container via /bin/sh -c, so docker exec / jq / etc. are available.
+  moddedserver:
+    image: example/game
+    labels:
+      - "discord.restart.enable=true"
+      - "discord.restart.check=docker exec gameserver ./status.sh | jq .players"
+      - "discord.restart.upcheck=docker exec gameserver ./healthy.sh"
+
+  # JS plugin: one file supplies both checks (see examples/plugins/)
+  statusgame:
+    image: example/other-game
+    labels:
+      - "discord.restart.enable=true"
+      - "discord.restart.plugin=/opt/games/status-plugin.js"
+      - "discord.restart.status-file=/opt/games/statusgame/status.json"  # plugin's own arg

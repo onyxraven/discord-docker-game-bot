@@ -1,0 +1,5 @@
+# /etc/cron.d/game-maintenance - daily maintenance restart at 04:30, run
+# inside the bot container so it shares the bot's .env, labels, and checks.
+# Waits for the server to empty (announcing to DISCORD_CHANNEL_ID), restarts,
+# confirms it came back up. Add --pull to also pull the latest image.
+30 4 * * * root /usr/bin/docker compose -f /opt/discord-restart-bot/docker-compose.yml exec -T bot node src/maintenance.js valheim >> /var/log/game-maintenance.log 2>&1
